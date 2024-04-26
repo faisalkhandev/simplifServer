@@ -7,6 +7,13 @@ export const createWaitlist = async (req, res) => {
             return res.status(400).send({ message: "Email is required" });
         }
 
+        // Check if the email already exists in the waitlist
+        const existingEntry = await waitlistModel.findOne({ email });
+        if (existingEntry) {
+            return res.status(409).send({ message: "Email already exists in the waitlist" });
+        }
+
+        // Create a new entry if the email does not exist
         const newEntry = await waitlistModel.create({ email });
         res.status(201).send(newEntry);
     } catch (error) {
